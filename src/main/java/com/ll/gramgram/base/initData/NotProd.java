@@ -12,6 +12,7 @@ public class NotProd {
     @Bean
     CommandLineRunner initData(MemberService memberService) {
         return args -> {
+            memberService.join("admin", "1234");
             memberService.join("user1", "1234");
             memberService.join("user2", "1234");
             memberService.join("user3", "1234");

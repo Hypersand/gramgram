@@ -143,9 +143,13 @@ public class MemberControllerTests {
                 .andDo(print());
 
         mvc.perform(post("/member/login")
+                        .with(csrf())
                         .param("username", "user1")
                         .param("password", "1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/**"))
                 .andDo(print());
+
     }
 
 }
