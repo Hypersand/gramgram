@@ -141,6 +141,11 @@ public class MemberControllerTests {
                         <input type="submit" value="로그인"
                         """.stripIndent().trim())))
                 .andDo(print());
+
+        mvc.perform(post("/member/login")
+                        .param("username", "user1")
+                        .param("password", "1234"))
+                .andDo(print());
     }
 
 }
