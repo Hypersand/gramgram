@@ -36,7 +36,12 @@ public class MemberController {
     public String join(@Validated JoinForm joinForm) {
         memberService.join(joinForm.getUsername(), joinForm.getPassword());
 
-        return "redirect:/";
+        return "redirect:/member/login";
+    }
+
+    @GetMapping("/login")
+    public String showLogin() {
+        return "usr/member/login";
     }
 
     @AllArgsConstructor
