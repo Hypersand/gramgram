@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -170,6 +171,18 @@ public class MemberControllerTests {
         User user = (User) securityContext.getAuthentication().getPrincipal();
 
         assertThat(user.getUsername()).isEqualTo("user1");
+    }
+
+    @Test
+    @DisplayName("로그인하면 내비바에 로그인한 회원의 username")
+    @WithUserDetails("user1")
+    void t006() throws Exception {
+        mvc.perform(get("/member/me"))
+                .andExpect(handler().handlerType(MemberController.class))
+                .andExpect(handler().methodName("showMe"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("user1님 환영합니다.")))
+                .andDo(print());
     }
 
 

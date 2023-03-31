@@ -48,6 +48,12 @@ public class MemberController {
         return "usr/member/login";
     }
 
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public String showMe() {
+        return "usr/member/me";
+    }
+
     @AllArgsConstructor
     @Getter
     public static class JoinForm {
