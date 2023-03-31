@@ -3,15 +3,21 @@ package com.ll.gramgram.boundedContext.member.controller;
 
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -22,10 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest // 스프링부트 관련 컴포넌트 테스트할 때 붙여야 함, Ioc 컨테이너 작동시킴
-@AutoConfigureMockMvc // http 요청, 응답 테스트
-@Transactional // 실제로 테스트에서 발생한 DB 작업이 영구적으로 적용되지 않도록, test + 트랜잭션 => 자동롤백
-@ActiveProfiles("test") // application-test.yml 을 활성화 시킨다.
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+@ActiveProfiles("test")
 public class MemberControllerTests {
     @Autowired
     private MockMvc mvc;
@@ -39,7 +45,9 @@ public class MemberControllerTests {
         mvc.perform(get("/member/test"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello test"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("모델로 넘긴 데이터명"))
                 .andDo(print());
+
     }
 
     @Test
@@ -73,7 +81,7 @@ public class MemberControllerTests {
         ResultActions resultActions = mvc
                 .perform(post("/member/join")
                         .with(csrf()) // CSRF 키 생성
-                        .param("username", "user10")
+                        .param("username", "bigsand")
                         .param("password", "1234")
                 )
                 .andDo(print());
@@ -84,7 +92,7 @@ public class MemberControllerTests {
                 .andExpect(handler().methodName("join"))
                 .andExpect(status().is3xxRedirection());
 
-        Member member = memberService.findByUsername("user10").orElse(null);
+        Member member = memberService.findByUsername("bigsand").orElse(null);
 
         assertThat(member).isNotNull();
     }
@@ -142,7 +150,13 @@ public class MemberControllerTests {
                         """.stripIndent().trim())))
                 .andDo(print());
 
-        mvc.perform(post("/member/login")
+
+    }
+
+    @Test
+    @DisplayName("로그인 처리")
+    void t005() throws Exception {
+        ResultActions resultActions = mvc.perform(post("/member/login")
                         .with(csrf())
                         .param("username", "user1")
                         .param("password", "1234"))
@@ -150,6 +164,14 @@ public class MemberControllerTests {
                 .andExpect(redirectedUrlPattern("/**"))
                 .andDo(print());
 
+        MvcResult mvcResult = resultActions.andReturn();
+        HttpSession session = mvcResult.getRequest().getSession(false);
+        SecurityContext securityContext = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
+        User user = (User) securityContext.getAuthentication().getPrincipal();
+
+        assertThat(user.getUsername()).isEqualTo("user1");
     }
+
+
 
 }
