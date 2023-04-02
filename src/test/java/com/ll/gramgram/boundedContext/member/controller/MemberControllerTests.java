@@ -91,7 +91,8 @@ public class MemberControllerTests {
         resultActions
                 .andExpect(handler().handlerType(MemberController.class))
                 .andExpect(handler().methodName("join"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/member/login?msg=**"));
 
         Member member = memberService.findByUsername("bigsand").orElse(null);
 

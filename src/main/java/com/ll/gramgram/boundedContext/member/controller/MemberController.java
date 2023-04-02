@@ -2,6 +2,7 @@ package com.ll.gramgram.boundedContext.member.controller;
 
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
+import com.ll.gramgram.standard.util.Ut;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -43,7 +44,7 @@ public class MemberController {
     public String join(@Validated JoinForm joinForm) {
         memberService.join(joinForm.getUsername(), joinForm.getPassword());
 
-        return "redirect:/member/login";
+        return "redirect:/member/login?msg=" + Ut.url.encode("회원가입이 완료되었습니다.\n로그인 후 이용해주세요.");
     }
 
     @PreAuthorize("isAnonymous()")
