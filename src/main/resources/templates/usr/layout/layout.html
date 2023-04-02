@@ -64,8 +64,8 @@
     <form hidden th:action="@{/member/logout}" sec:authorize="isAuthenticated()" method="post"></form>
     <a href="/member/me" sec:authorize="isAuthenticated()" class="btn btn-link">내 정보</a>
     <span sec:authorize="isAuthenticated()" th:text="|${#authentication.principal.username}님 환영합니다.|"></span>
-    <span sec:authorize="isAuthenticated()">당신의 회원번호는 [[${member.id}]]번입니다.</span>
-    <span sec:authorize="isAuthenticated()">당신은 [[${member.createDate}]]에 가입하셨습니다.</span>
+    <span sec:authorize="isAuthenticated()">당신의 회원번호는 [[${@rq.member.id}]]번입니다.</span>  <!-- @ : 빈 객체 접근 표현식 -->
+    <span sec:authorize="isAuthenticated()">당신은 [[${@rq.member.createDate}]]에 가입하셨습니다.</span>
 </header>
 <main layout:fragment="main">
 </main>

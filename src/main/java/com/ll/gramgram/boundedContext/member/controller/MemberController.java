@@ -54,11 +54,7 @@ public class MemberController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public String showMe(Principal principal, Model model) {
-        if (principal != null) {
-            Member member = memberService.findByUsername(principal.getName()).get();
-            model.addAttribute("member", member);
-        }
+    public String showMe() {
         return "usr/member/me";
     }
 
