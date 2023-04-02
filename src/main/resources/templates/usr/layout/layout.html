@@ -64,8 +64,6 @@
     <form hidden th:action="@{/member/logout}" th:if="${@rq.login}" method="post"></form>
     <a href="/member/me" th:if="${@rq.login}" class="btn btn-link">내 정보</a>
     <span th:if="${@rq.login}" th:text="|${#authentication.principal.username}님 환영합니다.|"></span>
-    <span th:if="${@rq.login}">당신의 회원번호는 [[${@rq.member.id}]]번입니다.</span>  <!-- @ : 빈 객체 접근 표현식 -->
-    <span th:if="${@rq.login}">당신은 [[${@rq.member.createDate}]]에 가입하셨습니다.</span>
 </header>
 <main layout:fragment="main">
 </main>
